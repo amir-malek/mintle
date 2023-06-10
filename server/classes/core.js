@@ -38,10 +38,11 @@ class Core{
         useNewUrlParser: true,
         useUnifiedTopology: true
       });
-      if (!silent) {
-        console.log('connected');
-      }
+      // if (!silent) {
+      //   console.log('connected');
+      // }
     } catch (error) {
+      console.log(error)
       console.log('cannot connect with the DB');
       mongoose.disconnect();
       setTimeout(this.dbConnect.bind(this),5000);
