@@ -7,7 +7,7 @@ COPY . /app/
 RUN npm install
 RUN npm install -g pm2
 
-ENV NODE_ENV production
+ENV NODE_ENV dev
 
 EXPOSE 9000
 
