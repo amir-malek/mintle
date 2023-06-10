@@ -1,0 +1,35 @@
+version: "3"
+services:
+  web:
+    container_name: app
+    build: .
+    ports:
+      - "9000:9000"
+    command: npm run dev
+    environment:
+      - NODE_ENV=docker
+    volumes:
+      - .:/app/
+      - /app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - webnet
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data:/data/db
+      - ./.docker/init:/docker-entrypoint-initdb.d
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_USERNAME=test
+      - MONGO_INITDB_PASSWORD=test
+    networks:
+      - webnet
+networks:
+  webnet:
