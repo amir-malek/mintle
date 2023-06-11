@@ -1,33 +1,30 @@
-'use strict';
-
 const User = require('../models/users');
 const config = require('config');
+
 const secretKey = config.get('security.secret');
-const Mailer = require('./mailer');
-const Core = require('./core');
 const moment = require('moment');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const Core = require('./core');
+const Mailer = require('./mailer');
 
 /**
  * This class manages the Users module and it's a singleton class
  * @class
  */
 class Users {
-
   /**
    * Generate the authentication token
    */
   generateAuthToken(user, securityToken) {
-
     securityToken = securityToken || user.getLastToken().token;
 
     const token = jwt.sign({
       email: Core.encode64(user.email),
-      securityToken: securityToken,
-      id: user._id
+      securityToken,
+      id: user._id,
     }, secretKey, {
-      expiresIn: '1d' //1 days
+      expiresIn: '1d', // 1 days
     });
     return token;
   }
@@ -48,15 +45,13 @@ class Users {
           const userSecurityToken = user.getLastToken();
           if (!userSecurityToken || !userSecurityToken) {
             return reject('Token expired or invalid');
-          } else {
-            if (encryptedEmail === user.email && userSecurityToken.token === decodedSecurityToken) {
-              return resolve({
-                user, securityToken: decoded.securityToken
-              });
-            } else {
-              return reject('Email do not match');
-            }
           }
+          if (encryptedEmail === user.email && userSecurityToken.token === decodedSecurityToken) {
+            return resolve({
+              user, securityToken: decoded.securityToken,
+            });
+          }
+          return reject('Email do not match');
         } catch (error) {
           reject('Token not valid for this user or user does not exists');
         }
@@ -69,17 +64,17 @@ class Users {
    */
   async activate(req) {
     try {
-      const token = req.body.token;
+      const { token } = req.body;
       if (!token) {
         throw new Error('No token has been passed');
       }
-      const data = await this.decodeAuthToken(token)
+      const data = await this.decodeAuthToken(token);
       const { user } = data;
       user.active = true;
       user.tokens = user.markTokenAsUsed(data.securityToken);
       await user.save();
       return {
-        success: true
+        success: true,
       };
     } catch (error) {
       throw error;
@@ -92,7 +87,7 @@ class Users {
   async logAuthentication(user) {
     user.last_login = Date.now();
     await user.save();
-    //UserLogger.log(user);
+    // UserLogger.log(user);
   }
 
   /**
@@ -100,7 +95,7 @@ class Users {
    */
   async newUser(req) {
     try {
-      //create a new instance of a user
+      // create a new instance of a user
       const user = new User();
       // set the user info
       user.firstname = req.body.firstname;
@@ -134,20 +129,22 @@ class Users {
    */
   async patchUser(req) {
     try {
-      //we need to retrieve the user data
-      let user =  await User.findById(req.params.user_id)
+      // we need to retrieve the user data
+      let user = await User.findById(req.params.user_id);
       // fields that should be removed in case somebody tries to pass them
       const ignoreFields = ['_id', 'username', 'tokens'];
 
       if ((!req.body.password || !req.body.conf_password) || (req.body.password !== req.body.conf_password)) {
-        throw new Error('Passwords do not match', { cause: {
-          code: 'notMatch'
-        }});
+        throw new Error('Passwords do not match', {
+          cause: {
+            code: 'notMatch',
+          },
+        });
       } else if (req.body.password === '') {
         ignoreFields.push('password');
       } // end if
 
-      ignoreFields.forEach(field => {
+      ignoreFields.forEach((field) => {
         if (req.body[field]) {
           delete req.body[field];
         }
@@ -169,7 +166,7 @@ class Users {
   async deleteUser(req) {
     try {
       await User.deleteOne({
-        _id: req.params.user_id
+        _id: req.params.user_id,
       });
       return 'User deleted successfully';
     } catch (error) {
@@ -198,10 +195,10 @@ class Users {
       user.email = req.body.email;
       user.company = req.body.company;
 
-      let securityToken = user.generateToken();
+      const securityToken = user.generateToken();
       user.tokens = [{
         token: securityToken,
-        expiry: moment().add(1, 'days')
+        expiry: moment().add(1, 'days'),
       }];
 
       if (user.passwordTooShort(req.body.password)) {
@@ -216,7 +213,6 @@ class Users {
       const data = await user.save();
       this.sendActivationEmail(user);
       return data;
-    
     } catch (error) {
       if (error.code === 11000) {
         throw new Error('A user with that email already exists');
@@ -225,12 +221,12 @@ class Users {
       } // end if
     }
   }
+
   /**
    * Send the activation emails for newly created users
    */
   sendActivationEmail(user) {
-    let token = this.generateAuthToken(user);
-
+    const token = this.generateAuthToken(user);
 
     // Configure mailgen by setting a theme and your product info
     // const mailGenerator = new Mailgen({
@@ -276,6 +272,7 @@ class Users {
     //   html: emailBody
     // });
   }
+
   /**
    * Find the user by its email and send the change password email
    */
@@ -286,7 +283,7 @@ class Users {
         throw new Error('Email is not valid');
       } // end if
       const user = await User.findOne({
-        email: email
+        email,
       });
       user.issueNewSecurityToken();
       // if we found a user, we send him an email
@@ -348,15 +345,15 @@ class Users {
   /**
    * Reset the password for a specific user
    */
-  async resetPassword(req){
-    let new_password = req.body.new_password;
-    let conf_new_password = req.body.conf_new_password;
-    const token = req.body.token;
+  async resetPassword(req) {
+    const { new_password } = req.body;
+    const { conf_new_password } = req.body;
+    const { token } = req.body;
     try {
-      const data = await this.decodeAuthToken(token)
-      let { user } = data;
-      if((!new_password || !conf_new_password) || (new_password !== conf_new_password)){
-        throw new Error('Password do not match')
+      const data = await this.decodeAuthToken(token);
+      const { user } = data;
+      if ((!new_password || !conf_new_password) || (new_password !== conf_new_password)) {
+        throw new Error('Password do not match');
       }// end if
       user.password = new_password;
       user.tokens = user.markTokenAsUsed(data.securityToken);
@@ -375,6 +372,7 @@ class Users {
     const userId = req.params.id;
     return getUserById(userId);
   }
+
   /**
    * Get ther user data
    */
@@ -386,13 +384,14 @@ class Users {
       throw new Error('Cannot find the user');
     }
   }
+
   /**
    * Get the list of users that are active and admins
    */
   async getAdmins() {
-    let query = User.find({
+    const query = User.find({
       is_admin: true,
-      active: true
+      active: true,
     });
 
     try {
@@ -406,41 +405,41 @@ class Users {
   /**
    * Get the full list of users
    */
-  async getUsers(req){
+  async getUsers(req) {
     const offset = 0;
 
     let limit = 20;
     let page = 1;
-    if(req.query){
+    if (req.query) {
       limit = parseInt(req.query.limit) || 20;
       page = parseInt(req.query.page) || 1;
     }
 
-    if(page){
-      if(page > 1){
+    if (page) {
+      if (page > 1) {
         offset = limit * (page - 1);
       }// end if
     }// end if
 
-    let queryFilter = {};
+    const queryFilter = {};
     try {
-      const count = await  User.countDocuments(queryFilter);
+      const count = await User.countDocuments(queryFilter);
 
-      let query = User.find(queryFilter);
+      const query = User.find(queryFilter);
       query.sort(' +email ');
       query.select(' -tokens ');
-      if(limit && page){
+      if (limit && page) {
         query.limit(limit);
         query.skip(offset);
       }// end if
       const list = await query.exec();
       return {
         list,
-        count: count,
-        pages: Math.ceil(count/limit),
-        limit: limit,
-        page: page
-      }
+        count,
+        pages: Math.ceil(count / limit),
+        limit,
+        page,
+      };
     } catch (error) {
       throw new Error('cannot find the users');
     }
@@ -451,6 +450,6 @@ class Users {
       .findById(req.decoded.id, ' -tokens -last_login -registration_date')
       .exec();
   }
-};
+}
 
 module.exports = new Users();
