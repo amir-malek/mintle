@@ -1,15 +1,15 @@
-'use strict';
-
+const express = require('express');
 const User = require('../models/users');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const config = require('config');
-const secretKey = config.get('security.secret');
-const UsersCtrl = require('../controllers/users');
-const isAdmin = require('../middlewares/middlewares').isAdmin;
-const isAuthenticated = require('../middlewares/middlewares').isAuthenticated;
 
-module.exports = (app, express) => {
+const secretKey = config.get('security.secret');
+const UsersCtrl = require('../controllers/users.controller');
+const { isAdmin } = require('../middlewares/middlewares');
+const { isAuthenticated } = require('../middlewares/middlewares');
+
+module.exports = (app) => {
   app.use(require('express-session')({ secret: secretKey, resave: true, saveUninitialized: true }));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -29,12 +29,12 @@ module.exports = (app, express) => {
     {
       usernameField: 'username',
       passwordField: 'password',
-      passReqToCallback: true
+      passReqToCallback: true,
     },
-    async function(req, username, password, done) {
+    (async (req, username, password, done) => {
       try {
-        let query = { username: username };
-        if(!req.params.admin){
+        const query = { username };
+        if (!req.params.admin) {
           query.is_admin = true;
         }// end if
 
@@ -51,15 +51,14 @@ module.exports = (app, express) => {
           return done(null, false);
         }
         return done(null, user);
-
       } catch (error) {
         done(error);
       }
-    }
+    }),
   ));
 
   // create the API routes
-  let usersApiRouter = express.Router();
+  const usersApiRouter = express.Router();
   /**
   * @api {post} /authenticate/ Perform an authentication
   * @apiName AuthenticateUser
@@ -329,7 +328,7 @@ module.exports = (app, express) => {
   */
   usersApiRouter.post('/verifytoken', UsersCtrl.PostVerifyToken);
 
-  //users routes
+  // users routes
   usersApiRouter.route('/users')
     /**
     * @api {post} /users/ Create a new user
@@ -665,7 +664,7 @@ module.exports = (app, express) => {
     */
     .delete(isAdmin, UsersCtrl.DeleteUser);
 
-  //usersApiRouter.post('/user/settings', jsonParser, UsersCtrl.PostUserSettings);
+  // usersApiRouter.post('/user/settings', jsonParser, UsersCtrl.PostUserSettings);
 
   /**
   * @api {get} /me/ Returns current user info
@@ -808,4 +807,4 @@ module.exports = (app, express) => {
   usersApiRouter.patch('/me/updatepwd', jsonParser, UsersCtrl.PatchMeUpdatePassword);
 
   return usersApiRouter;
-}
+};

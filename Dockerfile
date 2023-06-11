@@ -4,8 +4,9 @@ WORKDIR /app
 
 COPY . /app/
 
-RUN npm install
 RUN npm install -g pm2
+
+RUN yarn install
 
 ENV NODE_ENV dev
 
