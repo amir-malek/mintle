@@ -1,10 +1,10 @@
 const multer = require('multer');
 const path = require('path');
-const stream = require('stream');
+const fs = require('fs');
 const makeId = require('../utils/makeId');
-const database = require('../models');
-const { upload: awsUpload } = require('../services/storage/aws/objects');
 const { BadRequestError } = require('../utils/ApiError');
+const { addJob } = require('../services/queue/ipfs');
+const IpfsFile = require('../models/ipfsFile');
 
 const allowedMediaExtensions = ['.gif', '.jpeg', '.jpg', '.png', '.wav', '.ogg', '.glb', '.glt', '.webm', '.mp3', '.mp4'];
 
@@ -16,7 +16,16 @@ const generateFilename = (ogFilename) => {
 module.exports = {
   PostUploadSingleFile: async (req, res, next) => {
     try {
-      const multerStorage = multer.memoryStorage();
+      const NFTFilesDest = './server/storage/nfts';
+      const multerStorage = multer.diskStorage({
+        destination: (_, file, cb) => {
+          fs.mkdirSync(NFTFilesDest, { recursive: true });
+          cb(null, NFTFilesDest);
+        },
+        filename: (_, file, cb) => {
+          cb(null, generateFilename(file.originalname));
+        },
+      });
 
       const multerFilter = (_, file, cb) => {
         const ext = path.extname(file.originalname);
@@ -40,12 +49,24 @@ module.exports = {
           throw new BadRequestError(err.message);
         }
 
-        const generatedFilename = generateFilename(req.file.originalname);
+        // const generatedFilename = generateFilename(req.file.originalname);
 
-        const fileStream = stream.Readable.from(req.file.buffer);
+        // const fileStream = stream.Readable.from(req.file.buffer);
 
-        const ext = path.extname(req.file.originalname);
-        await awsUpload(fileStream, `public/nfts/${ext}/${generatedFilename}`);
+        // const ext = path.extname(req.file.originalname);
+        // await awsUpload(fileStream, `public/nfts/${ext}/${generatedFilename}`);
+
+        const ipfs = new IpfsFile();
+        ipfs.localPath = `${NFTFilesDest}/${req.file.filename}`;
+        ipfs.filename = req.file.filename;
+        ipfs.mimetype = path.extname(req.file.filename);
+        await ipfs.save();
+
+        await addJob(ipfs._id);
+
+        res.send({
+          message: 'Upload pending',
+        });
       });
     } catch (e) {
       next(e);

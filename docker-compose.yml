@@ -11,8 +11,10 @@ services:
     volumes:
       - .:/app/
       - /app/node_modules
+      - ./server/storage:/app/server/storage
     depends_on:
       - mongo
+      - redis
     networks:
       - webnet
   mongo:
@@ -31,6 +33,13 @@ services:
       - MONGO_INITDB_PASSWORD=test
     networks:
       - webnet
+  redis: 
+    container_name: 'redis'
+    image: 'redis'
+    ports: 
+      - "6379:6379"
+    networks:
+      - webnet        
 networks:
   webnet:
     driver: bridge
