@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const ipfsFileSchema = new Schema({
+const mediaSchema = new Schema({
   status: {
     type: String,
     enum: ['SUCCESS', 'PENDING', 'FAILED'],
@@ -20,6 +20,10 @@ const ipfsFileSchema = new Schema({
   cid: {
     type: String,
   },
+  image: {
+    type: Schema.Types.ObjectId,
+    ref: 'Image',
+  },
 });
 
-module.exports = mongoose.model('IpfsFile', ipfsFileSchema);
+module.exports = mongoose.model('Media', mediaSchema);

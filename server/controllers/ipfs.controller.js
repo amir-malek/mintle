@@ -3,8 +3,11 @@ const path = require('path');
 const fs = require('fs');
 const makeId = require('../utils/makeId');
 const { BadRequestError } = require('../utils/ApiError');
-const { addJob } = require('../services/queue/ipfs');
-const IpfsFile = require('../models/ipfsFile');
+const { addJob: addMediaJob } = require('../services/queue/ipfs/media');
+const { addJob: addImageJob } = require('../services/queue/ipfs/image');
+const Image = require('../models/Image');
+const Media = require('../models/Media');
+const NFTModel = require('../models/NFT');
 
 const allowedMediaExtensions = ['.gif', '.jpeg', '.jpg', '.png', '.wav', '.ogg', '.glb', '.glt', '.webm', '.mp3', '.mp4'];
 
@@ -42,27 +45,54 @@ module.exports = {
         limits: {
           fileSize: 100 * 1024 * 1024,
         },
-      }).single('file');
+      }).fields([
+        { name: 'image', maxCount: 1 },
+        { name: 'media', maxCount: 1 },
+      ]);
 
       upload(req, res, async (err) => {
         if (err) {
           throw new BadRequestError(err.message);
         }
 
-        // const generatedFilename = generateFilename(req.file.originalname);
+        const image = new Image();
 
-        // const fileStream = stream.Readable.from(req.file.buffer);
+        const imageFilename = req.files.image[0].filename;
 
-        // const ext = path.extname(req.file.originalname);
-        // await awsUpload(fileStream, `public/nfts/${ext}/${generatedFilename}`);
+        image.localPath = `${NFTFilesDest}/${imageFilename}`;
+        image.filename = imageFilename;
+        image.mimetype = path.extname(imageFilename);
+        await image.save();
 
-        const ipfs = new IpfsFile();
-        ipfs.localPath = `${NFTFilesDest}/${req.file.filename}`;
-        ipfs.filename = req.file.filename;
-        ipfs.mimetype = path.extname(req.file.filename);
-        await ipfs.save();
+        let media;
 
-        await addJob(ipfs._id);
+        if (req.files.media[0]) {
+          media = new Media();
+
+          const mediaFilename = req.files.media[0].filename;
+
+          media.localPath = `${NFTFilesDest}/${mediaFilename}`;
+          media.filename = mediaFilename;
+          media.mimetype = path.extname(mediaFilename);
+          media.image = image.id;
+          await media.save();
+
+          await addMediaJob(media.id);
+        } else {
+          await addImageJob(image.id);
+        }
+
+        const nft = new NFTModel();
+
+        nft.image = image.id;
+        if (req.files.media[0]) nft.media = media.id;
+        nft.metadata = {
+          name: req.body.name,
+          external_url: req.body.external_url,
+          description: req.body.description,
+        };
+
+        await nft.save();
 
         res.send({
           message: 'Upload pending',
