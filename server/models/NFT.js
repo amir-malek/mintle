@@ -18,6 +18,7 @@ const NFTSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Media',
   },
+  ipfsUrl: String,
   metadata: MetadataSchema,
 });
 

@@ -8,6 +8,7 @@ const { addJob: addImageJob } = require('../services/queue/ipfs/image');
 const Image = require('../models/Image');
 const Media = require('../models/Media');
 const NFTModel = require('../models/NFT');
+const { validateIpfsUpload } = require('../services/validators/ipfs');
 
 const allowedMediaExtensions = ['.gif', '.jpeg', '.jpg', '.png', '.wav', '.ogg', '.glb', '.glt', '.webm', '.mp3', '.mp4'];
 
@@ -54,6 +55,8 @@ module.exports = {
         if (err) {
           throw new BadRequestError(err.message);
         }
+
+        await validateIpfsUpload(req.body);
 
         const image = new Image();
 
