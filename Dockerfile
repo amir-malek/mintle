@@ -1,10 +1,11 @@
-FROM node:18.15-alpine
+FROM node:18.15
 
 WORKDIR /app
 
 COPY . /app/
 
-RUN npm install -g pm2
+# RUN npm install -g pm2
+RUN yarn global add pm2
 
 RUN yarn install
 

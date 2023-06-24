@@ -17,6 +17,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.350.0",
     "@aws-sdk/s3-presigned-post": "^3.350.0",
+    "@openzeppelin/contracts": "^4.9.2",
     "aws-sdk": "^2.1356.0",
     "bcrypt-nodejs": "0.0.3",
     "bull": "^4.10.4",
@@ -42,12 +43,16 @@
     "passport-local": "^1.0.0",
     "sha.js": "^2.4.11",
     "validator": "^13.9.0",
-    "web3.storage": "^4.5.4"
+    "web3.storage": "^4.5.4",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
     "eslint": "^7.32.0 || ^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.2",
+    "ethers": "^5.0.0",
+    "hardhat": "^2.15.0",
     "nodemon": "^2.0.22"
   }
 }

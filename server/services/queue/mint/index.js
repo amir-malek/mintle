@@ -4,8 +4,6 @@ const {
   Worker,
 } = require('bullmq');
 const fs = require('fs');
-const { File } = require('nft.storage');
-const Image = require('../../../models/Image');
 const NFTModel = require('../../../models/NFT');
 
 const nftStorageStore = require('../../ipfs/nft.storage/store');
@@ -15,18 +13,18 @@ const redisProperties = {
   password: config.get('redis.password'),
 };
 
-const queue = new Queue('imageQueue', {
+const queue = new Queue('mintQueue', {
   connection: redisProperties,
 });
 
 const addJob = async (data, opts = undefined) => {
-  await queue.add('image-upload', data, opts);
+  await queue.add('mint-nft', data, opts);
 };
 
 const addBulk = async (data, opts = undefined) => {
   for (let i = 0; i < data.length; i++) {
     // eslint-disable-next-line no-await-in-loop
-    await queue.add('image-upload', data[i], {
+    await queue.add('mint-nft', data[i], {
       delay: i * 2 * 60 * 1000,
       ...opts,
     });
