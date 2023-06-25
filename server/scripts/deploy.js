@@ -16,13 +16,13 @@ const getConfigFile = () => {
 };
 
 async function main() {
-  const Mint721 = await ethers.getContractFactory('MintNFT721');
+  const Mint721 = await ethers.getContractFactory('MyNFT');
 
   const myNFT = await Mint721.deploy(
-    'Moment',
-    'MMNT',
-    config.get('web3.wallet.address'),
-    config.get('web3.wallet.address'),
+    // 'Moment',
+    // 'MMNT',
+    // config.get('web3.wallet.address'),
+    // config.get('web3.wallet.address'),
   );
   await myNFT.deployed();
 
