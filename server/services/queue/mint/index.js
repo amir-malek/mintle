@@ -3,10 +3,8 @@ const { Queue } = require('bullmq');
 const {
   Worker,
 } = require('bullmq');
-const fs = require('fs');
 const NFTModel = require('../../../models/NFT');
-
-const nftStorageStore = require('../../ipfs/nft.storage/store');
+const mintNFT = require('../../mint/polygon');
 
 const redisProperties = {
   host: config.get('redis.host'),
@@ -34,32 +32,16 @@ const addBulk = async (data, opts = undefined) => {
 const workerInstance = new Worker(
   queue.name,
   async (job) => {
-    const image = await Image.findById(job.data);
+    const nft = await NFTModel.findById(job.data);
 
-    if (image.status === 'FAILED' || image.status === 'PENDING') {
-      const fileBuffer = fs.readFileSync(image.localPath);
+    if (!nft.ipfsUrl) throw new Error('No ipfs URI provided');
 
-      const file = new File([fileBuffer], image.filename, {
-        type: image.mimetype,
-      });
+    if (nft.mintStatus === 'FAILED' || nft.mintStatus === 'NOT_SET') {
+      const hash = await mintNFT(nft.destinationAddress, nft.ipfsUrl);
 
-      const nft = await NFTModel.findOne({
-        image: image.id,
-      });
-
-      const data = await nftStorageStore({
-        image: file,
-        name: nft.metadata.name,
-        description: nft.metadata.description,
-        external_url: nft.metadata.external_url,
-        animation_url: nft.metadata.animation_url,
-      });
-
-      nft.ipfsUrl = data.url;
+      nft.mintStatus = 'SUCCESS';
+      nft.txHash = hash;
       await nft.save();
-
-      image.status = 'SUCCESS';
-      await image.save();
     }
   },
   {
@@ -71,11 +53,12 @@ const workerInstance = new Worker(
 workerInstance.on('completed', async (job) => {
   // const ipfs = await IpfsFile.findById(job.data);
 });
-workerInstance.on('failed', async (job) => {
-  const media = await Image.findById(job.data);
 
-  media.status = 'FAILED';
-  await media.save();
+workerInstance.on('failed', async (job) => {
+  const nft = await NFTModel.findById(job.data);
+
+  nft.status = 'FAILED';
+  await nft.save();
 });
 
 workerInstance.on('error', (err) => {

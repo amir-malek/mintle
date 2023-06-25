@@ -25,7 +25,7 @@ contract MintNFT721 is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    function mint(address to, string memory _uri) external {
+    function mint(address to, string memory _uri) external returns (uint256) {
         require(msg.sender == collectionOwner, "Not a owner!");
 
         _tokenIds.increment();
@@ -33,6 +33,8 @@ contract MintNFT721 is ERC721URIStorage, Ownable {
         uint256 newItemId = _tokenIds.current();
         _mint(to, newItemId);
         _setTokenURI(newItemId, _uri);
+
+        return newItemId;
     }
 
     function burn(uint256 tokenId) public {
