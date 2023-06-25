@@ -15,13 +15,12 @@ module.exports = {
   defaultNetwork: 'mumbai',
   networks: {
     mumbai: {
-      url: config.get('web3.alchemy.apiUrl'),
+      url: config.get('web3.alchemy.mumbai.apiUrl'),
       accounts: [`0x${config.get('web3.wallet.pvKey')}`],
     },
-  //   hardhat: {},
-  //   sepolia: {
-  //     url: config.get('web3.alchemy.apiKey'),
-  //     accounts: [`0x${config.get('web3.wallet.pvKey')}`],
-  //   },
+    sepolia: {
+      url: config.get('web3.alchemy.sepolia.apiUrl'),
+      accounts: [`0x${config.get('web3.wallet.pvKey')}`],
+    },
   },
 };
