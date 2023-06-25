@@ -18,7 +18,18 @@ const NFTSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Media',
   },
+  destinationAddress: {
+    type: String,
+  },
+  txHash: {
+    type: String,
+  },
   ipfsUrl: String,
+  mintStatus: {
+    type: String,
+    enum: ['SUCCESS', 'PENDING', 'FAILED', 'NOT_SET'],
+    default: 'NOT_SET',
+  },
   metadata: MetadataSchema,
 });
 

@@ -69,7 +69,7 @@ module.exports = {
 
         let media;
 
-        if (req.files.media[0]) {
+        if (req.files.media) {
           media = new Media();
 
           const mediaFilename = req.files.media[0].filename;
@@ -88,7 +88,7 @@ module.exports = {
         const nft = new NFTModel();
 
         nft.image = image.id;
-        if (req.files.media[0]) nft.media = media.id;
+        if (req.files.media) nft.media = media.id;
         nft.metadata = {
           name: req.body.name,
           external_url: req.body.external_url,
