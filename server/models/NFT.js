@@ -24,6 +24,9 @@ const NFTSchema = new Schema({
   txHash: {
     type: String,
   },
+  callback: {
+    type: String,
+  },
   ipfsUrl: String,
   mintStatus: {
     type: String,
