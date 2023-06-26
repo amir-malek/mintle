@@ -3,6 +3,7 @@ const { Queue } = require('bullmq');
 const {
   Worker,
 } = require('bullmq');
+const { default: axios } = require('axios');
 const NFTModel = require('../../../models/NFT');
 const mintNFT = require('../../mint/polygon');
 
@@ -13,6 +14,7 @@ const redisProperties = {
 
 const queue = new Queue('mintQueue', {
   connection: redisProperties,
+  concurrency: 1,
 });
 
 const addJob = async (data, opts = undefined) => {
@@ -51,13 +53,17 @@ const workerInstance = new Worker(
 );
 
 workerInstance.on('completed', async (job) => {
-  // const ipfs = await IpfsFile.findById(job.data);
+  const nft = NFTModel.findById(job.data);
+
+  await axios.post(nft.callback, {
+    nftId: nft.id,
+  });
 });
 
 workerInstance.on('failed', async (job) => {
   const nft = await NFTModel.findById(job.data);
 
-  nft.status = 'FAILED';
+  nft.mintStatus = 'FAILED';
   await nft.save();
 });
 

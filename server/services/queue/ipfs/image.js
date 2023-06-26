@@ -5,10 +5,12 @@ const {
 } = require('bullmq');
 const fs = require('fs');
 const { File } = require('nft.storage');
+const { default: axios } = require('axios');
 const Image = require('../../../models/Image');
 const NFTModel = require('../../../models/NFT');
 
 const nftStorageStore = require('../../ipfs/nft.storage/store');
+const NFT = require('../../../models/NFT');
 
 const redisProperties = {
   host: config.get('redis.host'),
@@ -71,8 +73,15 @@ const workerInstance = new Worker(
 );
 
 workerInstance.on('completed', async (job) => {
-  // const ipfs = await IpfsFile.findById(job.data);
+  const image = await Image.findById(job.data);
+
+  const nft = await NFT.findOne({ image: image.id });
+
+  await axios.post(image.callback, {
+    nftId: nft.id,
+  });
 });
+
 workerInstance.on('failed', async (job) => {
   const media = await Image.findById(job.data);
 

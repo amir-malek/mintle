@@ -1,7 +1,6 @@
 const { ethers } = require('hardhat');
 const config = require('config');
 const fs = require('fs');
-const path = require('path');
 
 const getConfigFile = () => {
   const env = process.env.NODE_ENV;
@@ -12,25 +11,43 @@ const getConfigFile = () => {
       file: require('../../config/dev.json'),
       writePath: '/app/config/dev.json',
     };
+  } if (env === 'prod' || env === 'production') {
+    return {
+      path: '../../config/prod.json',
+      file: require('../../config/prod.json'),
+      writePath: '/app/config/prod.json',
+    };
   }
+  return {
+    path: '../../config/test.json',
+    file: require('../../config/test.json'),
+    writePath: '/app/config/test.json',
+  };
 };
 
 async function main() {
-  const Mint721 = await ethers.getContractFactory('MyNFT');
+  const Mint721 = await ethers.getContractFactory('MintNFT721');
 
   const myNFT = await Mint721.deploy(
-    // 'Moment',
-    // 'MMNT',
-    // config.get('web3.wallet.address'),
-    // config.get('web3.wallet.address'),
+    'Moment General Minting',
+    'MMNT',
+    config.get('web3.wallet.address'),
+    config.get('web3.wallet.address'),
   );
   await myNFT.deployed();
+
+  const ERC721Factory = await ethers.getContractFactory('ERC721Factory');
+  const myErc721Factory = await ERC721Factory.deploy(
+    myNFT.address,
+  );
+  await myErc721Factory.deployed();
 
   const configFile = getConfigFile();
 
   const obj = configFile.file;
 
-  obj.web3.contract.address = myNFT.address;
+  obj.web3.contracts.mint.address = myNFT.address;
+  obj.web3.contracts.factory.address = myErc721Factory.address;
 
   const json = JSON.stringify(obj);
 

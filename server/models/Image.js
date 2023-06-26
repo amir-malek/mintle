@@ -20,6 +20,9 @@ const imageSchema = new Schema({
   nftData: {
     type: JSON,
   },
+  callback: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('Image', imageSchema);

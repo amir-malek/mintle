@@ -56,6 +56,11 @@ module.exports = {
           throw new BadRequestError(err.message);
         }
 
+        const {
+          callback,
+          attributes,
+        } = req.body;
+
         await validateIpfsUpload(req.body);
 
         const image = new Image();
@@ -65,6 +70,7 @@ module.exports = {
         image.localPath = `${NFTFilesDest}/${imageFilename}`;
         image.filename = imageFilename;
         image.mimetype = path.extname(imageFilename);
+        image.callback = callback;
         await image.save();
 
         let media;
@@ -93,12 +99,14 @@ module.exports = {
           name: req.body.name,
           external_url: req.body.external_url,
           description: req.body.description,
+          attributes,
         };
 
         await nft.save();
 
         res.send({
           message: 'Upload pending',
+          nftId: nft.id,
         });
       });
     } catch (e) {
