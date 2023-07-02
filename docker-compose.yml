@@ -21,7 +21,7 @@ services:
     container_name: mongo
     image: mongo
     volumes:
-      - ./data:/data/db
+      - ../data:/data/db
       - ./.docker/init:/docker-entrypoint-initdb.d
     ports:
       - "27017:27017"
