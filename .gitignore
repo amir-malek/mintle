@@ -3,6 +3,4 @@ data/
 config/*
 !config/*.sample.json
 .DS_Store
-server/storage
-server/artifacts
 server/cache
