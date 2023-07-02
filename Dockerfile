@@ -9,6 +9,8 @@ RUN yarn global add pm2
 
 RUN yarn install
 
+RUN npx hardhat compile
+
 ENV NODE_ENV dev
 
 EXPOSE 9000
