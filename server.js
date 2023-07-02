@@ -134,6 +134,13 @@ require('./server/routes')(app);
 
 app.use(globalErrorHandler);
 
+app.use('/version', (req, res) => {
+  // eslint-disable-next-line global-require
+  const { version } = require('./package.json');
+
+  res.send(version);
+});
+
 /**
  * To add a rate limit
  */
