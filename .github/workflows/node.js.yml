@@ -16,6 +16,8 @@ jobs:
         run: docker-compose build
       - name: Decrypt CONFIG
         run: echo "${{ secrets.ENCRYPTED_CONFIG }}" | base64 --decode | openssl enc -d -aes-256-cbc -md sha256 -out config/dev.json -k "${{ secrets.ENCRYPTION_KEY }}"
+      - name: Compile contracts
+        run: npx hardhat compile
       - name: Deploy
         run: |
           docker-compose down
