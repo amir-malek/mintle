@@ -1,0 +1,21 @@
+name: Compile Contracts
+
+on:
+  workflow_dispatch:
+    inputs:
+      rollback:
+        description: 'Trigger compile'
+        required: true
+        default: 'true'
+
+jobs:
+  rollback:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Compile Contracts
+        run: |
+          docker-compose exec web npx hardhat compile
