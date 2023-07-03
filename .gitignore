@@ -4,3 +4,4 @@ config/*
 !config/*.sample.json
 .DS_Store
 server/cache
+server/storage

@@ -13,7 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build
-        run: docker-compose build
+        run: |
+          docker-compose build
+          docker image prune
       - name: Decrypt CONFIG
         run: echo "${{ secrets.ENCRYPTED_CONFIG }}" | base64 --decode | openssl enc -d -aes-256-cbc -md sha256 -out config/dev.json -k "${{ secrets.ENCRYPTION_KEY }}"
       - name: Deploy
