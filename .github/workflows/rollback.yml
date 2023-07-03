@@ -1,0 +1,37 @@
+name: Rollback Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      rollback:
+        description: 'Trigger rollback'
+        required: true
+        default: 'true'
+
+jobs:
+  rollback:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get one-to-last commit
+        id: get_commit
+        run: |
+          git fetch --depth=2 origin +refs/heads/main
+          git log -n 2 --pretty=format:"%H" > commit.txt
+
+      - name: Build and deploy one-to-last commit
+        run: |
+          PREVIOUS_COMMIT=$(head -n 1 commit.txt)
+          git checkout $PREVIOUS_COMMIT
+      - name: Build
+        run: docker-compose build
+      - name: Decrypt CONFIG
+        run: echo "${{ secrets.ENCRYPTED_CONFIG }}" | base64 --decode | openssl enc -d -aes-256-cbc -md sha256 -out config/dev.json -k "${{ secrets.ENCRYPTION_KEY }}"
+      - name: Deploy
+        run: |
+          docker-compose down
+          docker-compose pull
+          docker-compose up -d
