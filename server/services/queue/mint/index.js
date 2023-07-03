@@ -39,11 +39,16 @@ const workerInstance = new Worker(
     if (!nft.ipfsUrl) throw new Error('No ipfs URI provided');
 
     if (nft.mintStatus === 'FAILED' || nft.mintStatus === 'NOT_SET') {
-      const hash = await mintNFT(nft.destinationAddress, nft.ipfsUrl);
+      const receipt = await mintNFT(nft.destinationAddress, nft.ipfsUrl);
 
-      nft.mintStatus = 'SUCCESS';
-      nft.txHash = hash;
-      await nft.save();
+      if (receipt.status === '1n') {
+        nft.mintStatus = 'SUCCESS';
+        nft.txHash = receipt.transactionHash;
+        nft.tokenId = Number(receipt.data);
+        await nft.save();
+      } else {
+        throw new Error('NFT mint error');
+      }
     }
   },
   {
