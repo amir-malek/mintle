@@ -18,4 +18,4 @@ jobs:
 
       - name: Compile Contracts
         run: |
-          docker-compose exec web npx hardhat compile
+          docker-compose exec -i web npx hardhat compile

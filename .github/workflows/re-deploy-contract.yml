@@ -18,4 +18,4 @@ jobs:
 
       - name: Compile Contracts
         run: |
-          docker-compose exec web npx hardhat --network sepolia run server/scripts/deploy.js
+          docker-compose exec -i web npx hardhat --network sepolia run server/scripts/deploy.js
