@@ -10,6 +10,8 @@ contract MintNFT721 is ERC721URIStorage, Ownable {
     address public collectionOwner;
     address public collectionMinter;
 
+    event Minted(uint256 indexed id);
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -33,6 +35,8 @@ contract MintNFT721 is ERC721URIStorage, Ownable {
         uint256 newItemId = _tokenIds.current();
         _mint(to, newItemId);
         _setTokenURI(newItemId, _uri);
+
+        emit Minted(newItemId);
 
         return newItemId;
     }
@@ -61,7 +65,7 @@ contract ERC721Factory is Ownable {
         address collector,
         string memory _name,
         string memory _sybmol
-    ) external {
+    ) external returns (address) {
         require(
             collector != address(0),
             "Collector address should not be zero!"
@@ -74,6 +78,8 @@ contract ERC721Factory is Ownable {
         );
         collectionRecords[collector] = address(collection);
         emit CollectionCreation(address(collection), collector);
+
+        return address(collection);
     }
 
     function mintUnderCollection(
