@@ -1,4 +1,4 @@
-name: Compile Contracts
+name: Re-Deploy Contracts
 
 on:
   workflow_dispatch:
