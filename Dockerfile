@@ -9,7 +9,7 @@ RUN yarn global add pm2
 
 RUN yarn install
 
-ENV NODE_ENV dev
+ENV NODE_ENV production
 
 EXPOSE 9000
 
