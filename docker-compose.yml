@@ -5,9 +5,10 @@ services:
     build: .
     ports:
       - "9000:9000"
-    command: npm run dev
+    command: yarn start
     environment:
-      - NODE_ENV=dev
+      - NODE_ENV=production
+    restart: always
     volumes:
       - .:/app/
       - /app/node_modules

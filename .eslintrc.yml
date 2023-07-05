@@ -6,4 +6,6 @@ extends: airbnb-base
 overrides: []
 parserOptions:
   ecmaVersion: latest
-rules: {}
+rules: {
+  "linebreak-style": "off"
+}
