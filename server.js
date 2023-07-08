@@ -10,7 +10,7 @@ const apiBasePath = config.get('server.apiBaseRoot') || '/api';
 const FileStreamRotator = require('file-stream-rotator');
 const compression = require('compression');
 
-const logDirectory = `${__dirname}/logs`;
+const logDirectory = `${__dirname}/../logs`;
 const fs = require('fs');
 const http = require('http').Server(app);
 const session = require('express-session');
