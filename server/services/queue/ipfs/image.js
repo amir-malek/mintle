@@ -83,10 +83,10 @@ workerInstance.on('completed', async (job) => {
 });
 
 workerInstance.on('failed', async (job) => {
-  const media = await Image.findById(job.data);
+  const image = await Image.findById(job.data);
 
-  media.status = 'FAILED';
-  await media.save();
+  image.status = 'FAILED';
+  await image.save();
 });
 
 workerInstance.on('error', (err) => {

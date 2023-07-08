@@ -5,10 +5,12 @@ const makeId = require('../utils/makeId');
 const { BadRequestError } = require('../utils/ApiError');
 const { addJob: addMediaJob } = require('../services/queue/ipfs/media');
 const { addJob: addImageJob } = require('../services/queue/ipfs/image');
+const { addJob: addImageDownloadJob } = require('../services/queue/ipfs/imageWithUrl');
+const { addJob: addMediaDownloadJob } = require('../services/queue/ipfs/mediaWithUrl');
 const Image = require('../models/Image');
 const Media = require('../models/Media');
 const NFTModel = require('../models/NFT');
-const { validateIpfsUpload } = require('../services/validators/ipfs');
+const { validateIpfsUpload, validateIpfsUploadWithUrl } = require('../services/validators/ipfs');
 
 const allowedMediaExtensions = ['.gif', '.jpeg', '.jpg', '.png', '.wav', '.ogg', '.glb', '.glt', '.webm', '.mp3', '.mp4'];
 
@@ -114,6 +116,77 @@ module.exports = {
           nftId: nft.id,
         });
       });
+    } catch (e) {
+      next(e);
+    }
+  },
+  PostUploadWithUrl: async (req, res, next) => {
+    try {
+      const {
+        imageUrl,
+        mediaUrl,
+        callback,
+        attributes,
+        name,
+        external_url,
+        description,
+      } = req.body;
+
+      await validateIpfsUploadWithUrl(req.body);
+
+      const ext = path.extname(imageUrl);
+      if (!allowedMediaExtensions.includes(ext.toLowerCase())) {
+        throw new BadRequestError(`Extension not supported: ${ext}`);
+      }
+
+      const image = new Image();
+
+      const splitString = imageUrl.split('/');
+      const filename = splitString[splitString.length - 1];
+
+      image.filename = filename;
+      image.sourceUrl = imageUrl;
+      image.mimetype = ext;
+      image.callback = callback;
+      await image.save();
+
+      let media;
+
+      if (mediaUrl) {
+        const mediaExt = path.extname(mediaUrl);
+        if (!allowedMediaExtensions.includes(mediaExt.toLowerCase())) {
+          throw new BadRequestError(`Extension not supported: ${mediaExt}`);
+        }
+
+        media = new Media();
+
+        const splitStringMedia = mediaUrl.split('/');
+        const mediaFilename = splitStringMedia[splitStringMedia.length - 1];
+
+        media.filename = mediaFilename;
+        media.mimetype = mediaExt;
+        media.sourceUrl = mediaUrl;
+        media.image = image.id;
+        await media.save();
+
+        await addMediaDownloadJob(media.id);
+      } else {
+        await addImageDownloadJob(image.id);
+      }
+
+      const nft = new NFTModel();
+
+      nft.image = image.id;
+      if (mediaUrl) nft.media = media.id;
+
+      nft.metadata = {
+        name,
+        external_url,
+        description,
+        attributes,
+      };
+
+      await nft.save();
     } catch (e) {
       next(e);
     }

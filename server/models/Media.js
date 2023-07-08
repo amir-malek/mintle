@@ -8,6 +8,9 @@ const mediaSchema = new Schema({
     enum: ['SUCCESS', 'PENDING', 'FAILED'],
     default: 'PENDING',
   },
+  sourceUrl: {
+    type: String,
+  },
   localPath: {
     type: String,
   },
