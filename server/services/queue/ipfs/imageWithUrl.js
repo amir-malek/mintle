@@ -49,6 +49,9 @@ const workerInstance = new Worker(
       });
 
       response.data.pipe(file);
+
+      image.localPath = destDownloadPath;
+      await image.save();
     }
   },
   {
