@@ -15,7 +15,7 @@ jobs:
       - name: Build
         run: |
           docker-compose build
-          docker image prune
+          docker image prune -a -f
       - name: Decrypt CONFIG
         run: echo "${{ secrets.ENCRYPTED_CONFIG }}" | base64 --decode | openssl enc -d -aes-256-cbc -md sha256 -out config/production.json -k "${{ secrets.ENCRYPTION_KEY }}"
       - name: Deploy
