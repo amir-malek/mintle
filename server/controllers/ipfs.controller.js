@@ -187,6 +187,11 @@ module.exports = {
       };
 
       await nft.save();
+
+      res.send({
+        message: 'Upload pending',
+        nftId: nft.id,
+      });
     } catch (e) {
       next(e);
     }
