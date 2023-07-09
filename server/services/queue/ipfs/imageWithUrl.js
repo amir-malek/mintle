@@ -5,6 +5,7 @@ const {
 } = require('bullmq');
 const fs = require('fs');
 const http = require('http');
+const { default: axios } = require('axios');
 const Image = require('../../../models/Image');
 const { addJob: addImageJob } = require('./image');
 
@@ -41,19 +42,13 @@ const workerInstance = new Worker(
 
       const file = fs.createWriteStream(destDownloadPath);
 
-      http.get(image.sourceUrl, (response) => {
-        response.pipe(file);
-
-        file.on('finish', async () => {
-          file.close();
-          // file downloaded
-
-          image.localPath = destDownloadPath;
-          await image.save();
-
-          await addImageJob(image.id);
-        });
+      const response = await axios({
+        url: image.sourceUrl,
+        method: 'GET',
+        responseType: 'stream',
       });
+
+      response.data.pipe(file);
     }
   },
   {

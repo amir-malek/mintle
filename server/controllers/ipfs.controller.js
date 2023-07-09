@@ -1,6 +1,8 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const { default: axios } = require('axios');
 const makeId = require('../utils/makeId');
 const { BadRequestError } = require('../utils/ApiError');
 const { addJob: addMediaJob } = require('../services/queue/ipfs/media');
