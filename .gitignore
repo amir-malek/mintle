@@ -6,4 +6,3 @@ config/*
 server/cache
 server/storage
 .idea
-.idea
