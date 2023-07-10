@@ -175,13 +175,9 @@ module.exports = {
         media.image = image.id;
         await media.save();
 
-        await addMediaDownloadJob(media.id, {
-          delay: 2 * 60 * 1000,
-        });
+        await addMediaDownloadJob(media.id);
       } else {
-        await addImageDownloadJob(image.id, {
-          delay: 2 * 60 * 1000,
-        });
+        await addImageDownloadJob(image.id);
       }
 
       const nft = new NFTModel();

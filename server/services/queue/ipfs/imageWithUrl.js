@@ -15,7 +15,7 @@ const redisProperties = {
   password: config.get('redis.password'),
 };
 
-const queue = new Queue('imageQueue', {
+const queue = new Queue('imageDownloadQueue', {
   connection: redisProperties,
 });
 
@@ -38,7 +38,7 @@ const workerInstance = new Worker(
   async (job) => {
     const image = await Image.findById(job.data);
 
-    console.log(image.status === 'FAILED' || image.status === 'PENDING');
+    console.log('image download started');
 
     if (image.status === 'FAILED' || image.status === 'PENDING') {
       const destDownloadPath = `./server/storage/nfts/${image.filename}`;
@@ -59,6 +59,9 @@ const workerInstance = new Worker(
       const media = await Media.find({
         image: image.id,
       });
+
+      console.log(`media: ${media}`);
+
       if (media) {
         await addMediaJob(media.id);
       } else {
