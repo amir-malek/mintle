@@ -40,6 +40,8 @@ const workerInstance = new Worker(
   async (job) => {
     const image = await Image.findById(job.data);
 
+    console.log('image upload job started');
+
     if (image.status === 'FAILED' || image.status === 'PENDING') {
       const fileBuffer = fs.readFileSync(image.localPath);
 
@@ -58,6 +60,8 @@ const workerInstance = new Worker(
         external_url: nft.metadata.external_url,
         animation_url: nft.metadata.animation_url,
       });
+
+      console.log(`data: ${data}`);
 
       nft.ipfsUrl = data.url;
       await nft.save();
