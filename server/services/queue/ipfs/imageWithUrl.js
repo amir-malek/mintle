@@ -56,11 +56,9 @@ const workerInstance = new Worker(
       image.localPath = destDownloadPath;
       await image.save();
 
-      const media = await Media.find({
+      const media = await Media.exists({
         image: image.id,
       });
-
-      console.log(`media: ${media}`);
 
       if (media) {
         await addMediaJob(media.id);
