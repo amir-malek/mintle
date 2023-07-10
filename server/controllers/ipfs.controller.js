@@ -94,9 +94,13 @@ module.exports = {
           media.image = image.id;
           await media.save();
 
-          await addMediaJob(media.id);
+          await addMediaJob(media.id, {
+            delay: 2 * 60 * 1000,
+          });
         } else {
-          await addImageJob(image.id);
+          await addImageJob(image.id, {
+            delay: 2 * 60 * 1000,
+          });
         }
 
         const nft = new NFTModel();
@@ -171,9 +175,13 @@ module.exports = {
         media.image = image.id;
         await media.save();
 
-        await addMediaDownloadJob(media.id);
+        await addMediaDownloadJob(media.id, {
+          delay: 2 * 60 * 1000,
+        });
       } else {
-        await addImageDownloadJob(image.id);
+        await addImageDownloadJob(image.id, {
+          delay: 2 * 60 * 1000,
+        });
       }
 
       const nft = new NFTModel();
