@@ -4,7 +4,6 @@ const {
   Worker,
 } = require('bullmq');
 const fs = require('fs');
-const http = require('http');
 const { default: axios } = require('axios');
 const { addJob: addImageJob } = require('./imageWithUrl');
 const Media = require('../../../models/Media');
@@ -52,6 +51,8 @@ const workerInstance = new Worker(
 
       media.localPath = destDownloadPath;
       await media.save();
+
+      await addImageJob(media.image.id);
     }
   },
   {

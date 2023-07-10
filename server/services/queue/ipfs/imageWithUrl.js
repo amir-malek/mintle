@@ -4,10 +4,11 @@ const {
   Worker,
 } = require('bullmq');
 const fs = require('fs');
-const http = require('http');
 const { default: axios } = require('axios');
 const Image = require('../../../models/Image');
 const { addJob: addImageJob } = require('./image');
+const { addJob: addMediaJob } = require('./media');
+const Media = require('../../../models/Media');
 
 const redisProperties = {
   host: config.get('redis.host'),
@@ -37,6 +38,8 @@ const workerInstance = new Worker(
   async (job) => {
     const image = await Image.findById(job.data);
 
+    console.log(image.status === 'FAILED' || image.status === 'PENDING');
+
     if (image.status === 'FAILED' || image.status === 'PENDING') {
       const destDownloadPath = `./server/storage/nfts/${image.filename}`;
 
@@ -48,10 +51,19 @@ const workerInstance = new Worker(
         responseType: 'stream',
       });
 
-      response.data.pipe(file);
+      await response.data.pipe(file);
 
       image.localPath = destDownloadPath;
       await image.save();
+
+      const media = await Media.find({
+        image: image.id,
+      });
+      if (media) {
+        await addMediaJob(media.id);
+      } else {
+        await addImageJob(image.id);
+      }
     }
   },
   {
