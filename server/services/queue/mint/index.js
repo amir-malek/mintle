@@ -58,11 +58,15 @@ const workerInstance = new Worker(
 );
 
 workerInstance.on('completed', async (job) => {
-  const nft = NFTModel.findById(job.data);
+  try {
+    const nft = NFTModel.findById(job.data);
 
-  await axios.post(nft.callback, {
-    nftId: nft.id,
-  });
+    await axios.post(nft.callback, {
+      nftId: nft.id,
+    });
+  } catch (e) {
+    console.log('Callback call failed');
+  }
 });
 
 workerInstance.on('failed', async (job) => {
