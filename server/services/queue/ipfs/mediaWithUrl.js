@@ -13,7 +13,7 @@ const redisProperties = {
   password: config.get('redis.password'),
 };
 
-const queue = new Queue('mediaQueue', {
+const queue = new Queue('mediaDownloadQueue', {
   connection: redisProperties,
 });
 
