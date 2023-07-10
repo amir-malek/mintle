@@ -19,6 +19,7 @@ const redisProperties = {
 
 const queue = new Queue('imageQueue', {
   connection: redisProperties,
+  concurrency: 1,
 });
 
 const addJob = async (data, opts = undefined) => {
@@ -61,7 +62,7 @@ const workerInstance = new Worker(
         animation_url: nft.metadata.animation_url,
       });
 
-      console.log(`data: ${data}`);
+      console.log('uploaded to ipfs');
 
       nft.ipfsUrl = data.url;
       await nft.save();
@@ -77,13 +78,17 @@ const workerInstance = new Worker(
 );
 
 workerInstance.on('completed', async (job) => {
-  const image = await Image.findById(job.data);
+  try {
+    const image = await Image.findById(job.data);
 
-  const nft = await NFT.findOne({ image: image.id });
+    const nft = await NFT.findOne({ image: image.id });
 
-  await axios.post(image.callback, {
-    nftId: nft.id,
-  });
+    await axios.post(image.callback, {
+      nftId: nft.id,
+    });
+  } catch (e) {
+    console.log('Callback call failed');
+  }
 });
 
 workerInstance.on('failed', async (job) => {

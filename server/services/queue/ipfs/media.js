@@ -17,6 +17,7 @@ const redisProperties = {
 
 const queue = new Queue('mediaQueue', {
   connection: redisProperties,
+  concurrency: 1,
 });
 
 const addJob = async (data, opts = undefined) => {
