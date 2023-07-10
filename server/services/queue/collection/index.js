@@ -38,7 +38,7 @@ const addBulk = async (data, opts = undefined) => {
 const workerInstance = new Worker(
   queue.name,
   async (job) => {
- 
+
   },
   {
     connection: redisProperties,
@@ -47,13 +47,17 @@ const workerInstance = new Worker(
 );
 
 workerInstance.on('completed', async (job) => {
-  const image = await Image.findById(job.data);
+  try {
+    const image = await Image.findById(job.data);
 
-  const nft = await NFT.findOne({ image: image.id });
+    const nft = await NFT.findOne({ image: image.id });
 
-  await axios.post(image.callback, {
-    nftId: nft.id,
-  });
+    await axios.post(image.callback, {
+      nftId: nft.id,
+    });
+  } catch (e) {
+    console.log('Callback call failed');
+  }
 });
 
 workerInstance.on('failed', async (job) => {
