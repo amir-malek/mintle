@@ -41,14 +41,14 @@ const workerInstance = new Worker(
     if (nft.mintStatus === 'FAILED' || nft.mintStatus === 'NOT_SET') {
       const receipt = await mintNFT(nft.destinationAddress, nft.ipfsUrl);
 
-      if (receipt.status === '1n') {
-        nft.mintStatus = 'SUCCESS';
-        nft.txHash = receipt.transactionHash;
-        nft.tokenId = Number(receipt.data);
-        await nft.save();
-      } else {
-        throw new Error('NFT mint error');
-      }
+      // if (receipt.status === '1n') {
+      nft.mintStatus = 'SUCCESS';
+      nft.txHash = receipt.transactionHash;
+      nft.tokenId = Number(receipt.data);
+      await nft.save();
+      // } else {
+      //   throw new Error('NFT mint error');
+      // }
     }
   },
   {
