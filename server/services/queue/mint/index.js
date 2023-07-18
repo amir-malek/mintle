@@ -63,10 +63,10 @@ workerInstance.on('completed', async (job) => {
 
     await axios.post(nft.callback, {
       nftId: nft.id,
+      txHash: nft.txHash,
     });
   } catch (e) {
-    console.log(e);
-    console.log(`Callback call failed: ${e.message}`);
+    console.log(`Callback call failed: mint ${e.message}`);
   }
 });
 
