@@ -87,7 +87,7 @@ workerInstance.on('completed', async (job) => {
       nftId: nft.id,
     });
   } catch (e) {
-    console.log('Callback call failed');
+    console.log('Callback call failed: ipfs', e.message);
   }
 });
 
