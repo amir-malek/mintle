@@ -59,7 +59,7 @@ const workerInstance = new Worker(
 
 workerInstance.on('completed', async (job) => {
   try {
-    const nft = NFTModel.findById(job.data);
+    const nft = await NFTModel.findById(job.data);
 
     await axios.post(nft.callback, {
       nftId: nft.id,
