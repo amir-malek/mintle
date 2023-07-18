@@ -3,13 +3,9 @@ const { Queue } = require('bullmq');
 const {
   Worker,
 } = require('bullmq');
-const fs = require('fs');
-const { File } = require('nft.storage');
 const { default: axios } = require('axios');
 const Image = require('../../../models/Image');
-const NFTModel = require('../../../models/NFT');
 
-const nftStorageStore = require('../../ipfs/nft.storage/store');
 const NFT = require('../../../models/NFT');
 
 const redisProperties = {
