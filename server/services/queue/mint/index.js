@@ -65,7 +65,8 @@ workerInstance.on('completed', async (job) => {
       nftId: nft.id,
     });
   } catch (e) {
-    console.log('Callback call failed');
+    console.log(e);
+    console.log(`Callback call failed: ${e.message}`);
   }
 });
 
