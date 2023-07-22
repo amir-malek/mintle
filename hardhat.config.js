@@ -2,6 +2,7 @@
 * @type import('hardhat/config').HardhatUserConfig
 */
 require('@nomiclabs/hardhat-ethers');
+require('@nomiclabs/hardhat-etherscan');
 const config = require('config');
 
 module.exports = {
