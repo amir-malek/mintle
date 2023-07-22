@@ -13,9 +13,9 @@ const getConfigFile = () => {
     };
   } if (env === 'prod' || env === 'production') {
     return {
-      path: '../../config/prod.json',
-      file: require('../../config/prod.json'),
-      writePath: '/app/config/prod.json',
+      path: '../../config/production.json',
+      file: require('../../config/production.json'),
+      writePath: '/app/config/production.json',
     };
   }
   return {
