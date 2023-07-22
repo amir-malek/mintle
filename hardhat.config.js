@@ -6,6 +6,9 @@ const config = require('config');
 
 module.exports = {
   solidity: '0.8.4',
+  etherscan: {
+    apiKey: config.get('web3.etherscan.apiKey'),
+  },
   paths: {
     sources: './server/contracts',
     artifacts: './server/artifacts',
