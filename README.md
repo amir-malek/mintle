@@ -1,7 +1,6 @@
-# Express.js + MongoDB boilerplate
+# Mintle minting platform API
 
-This is a simple Node.js boilerplate that uses Express.js, MongoDB with Mongoose, and it has a basic user model
-
+This is a API service that utilizes Redis, mongodb and nodejs (express) to deliver API endpoints for minting files and uploading those files to IPFS
 ## Docker
 
 To start the server, and it's the first run, you need to build it first with:
@@ -69,6 +68,25 @@ db.createUser({
 ```
 
 In case you never used the MongoDB shell, to run this code you simply have to run `mongo` in your terminal.
+### Smart contract
+
+#### Deployment:
+
+To deploy a smart contract you must initially check the `hardhat.config.js` file for required configuration variables and environment variables then be sure to check the `/server/scripts/deploy.js` file to provide the smart contract constructor values.
+then you can start deployment buy running the following line in your running docker container:
+
+```
+npx hardhat run --network sepolia server/scripts/deploy.js
+```
+
+#### Verification (Etherscan)
+
+To verify your deployed smart contract on Etherscan you can run the following code:
+
+```
+npx hardhat verify <contract address> <...constructor values>
+```
+the Constructor values in the line above should be the same ones used to deploy the smart contract
 
 ### Security
 
@@ -82,6 +100,19 @@ security:
 ```
 
 This will tell to MongoDB to allow connections only with the valid users, and not to be open to the public as it's by default (and I don't understand why they do that).
+
+#### Encrypting env config files:
+if using a gitlab/github runner, you can run the following lines to convert your local .json file to a base64 text that you can paste in your git environment configurations, along with the encryption phrase:
+
+```
+openssl enc -e -aes-256-cbc -md sha256 -in config/production.json -out encrypted_config.txt -k <encryption phrase>
+```
+
+```
+base64 -i encrypted_config.txt | tr -d '\n' > encoded_config.txt
+```
+
+The decryption phase can be found in `/.github/workflows/node.js.yml`
 
 ### Backup and Restore with MongoDB
 
@@ -143,12 +174,3 @@ docker-compose exec -T mongo sh -c 'mongorestore --nsInclude=mydb.* --host=local
 
 ---
 
-## Helpful links
-
-* [nodemailer with Amazon SES](https://nodemailer.com/transports/ses/)
-* [Install MongoDB on Ubuntu](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
-* [Install MongoDB on RedHat/Centos](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-red-hat/)
-* [Install MongoDB on Amazon Linux](https://docs.mongodb.com/v3.4/tutorial/install-mongodb-on-amazon/)
-* [How to Install MongoDB on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-16-04)
-* [Robomongo - GUI for MongoDB on Mac](https://robomongo.org/download)
-* [Backup And Restore with MongoDB](https://docs.mongodb.com/manual/tutorial/backup-and-restore-tools/)
