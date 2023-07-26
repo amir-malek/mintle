@@ -22,6 +22,10 @@ module.exports = {
       url: config.get('web3.alchemy.mumbai.apiUrl'),
       accounts: [`0x${config.get('web3.wallet.pvKey')}`],
     },
+    polygon: {
+      url: config.get('web3.alchemy.polygon.apiUrl'),
+      accounts: [`0x${config.get('web3.wallet.pvKey')}`],
+    },
     sepolia: {
       url: config.get('web3.alchemy.sepolia.apiUrl'),
       accounts: [`0x${config.get('web3.wallet.pvKey')}`],
