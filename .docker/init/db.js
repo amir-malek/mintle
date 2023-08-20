@@ -1,12 +1,12 @@
 db = db.getSiblingDB("test")
 
 db.createUser({
-  user: "test",
-  pwd: "test",
+  user: "moment",
+  pwd: "fV=g#Dt/9JA=8{s^M?S;Wb|-",
   roles: [
     {
       role: "userAdmin",
-      db: "test"
+      db: "moment"
     },
     "readWrite"
   ]
