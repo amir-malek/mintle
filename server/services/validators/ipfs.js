@@ -37,6 +37,6 @@ exports.validateIpfsUploadWithUrl = async (body) => {
       abortEarly: false,
     });
   } catch (e) {
-    throw new FormValidationError(e);
+    throw new FormValidationError(e, e.message);
   }
 };

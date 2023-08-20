@@ -1,0 +1,17 @@
+name: Decrypt configurations
+
+on:
+  workflow_dispatch:
+    inputs:
+      rollback:
+        description: 'Trigger decrypt'
+        required: true
+        default: 'true'
+
+jobs:
+  rollback:
+    runs-on: self-hosted
+
+    steps:
+      - name: Decrypt CONFIG
+        run: echo "${{ secrets.ENCRYPTED_CONFIG }}" | base64 --decode | openssl enc -d -aes-256-cbc -md sha256 -out config/dev.json -k "${{ secrets.ENCRYPTION_KEY }}"
