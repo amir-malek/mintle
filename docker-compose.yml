@@ -34,17 +34,17 @@ services:
       - MONGO_INITDB_PASSWORD="fV=g#Dt/9JA=8{s^M?S;Wb|-"
     networks:
       - webnet
-  redis: 
+  redis:
     container_name: 'redis'
     image: 'redis'
     volumes:
       - ./docker/images/redis/data:/data
     environment:
-      REDIS_PASSWORD: U[^CbCFIYnc:eq$@EF#H}LC
-    ports: 
+      - REDIS_PASSWORD=U[^CbCFIYnc:eq$@EF#H}LC
+    ports:
       - "6379:6379"
     networks:
-      - webnet        
+      - webnet
 networks:
   webnet:
     driver: bridge
