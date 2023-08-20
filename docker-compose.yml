@@ -5,9 +5,9 @@ services:
     build: .
     ports:
       - "9000:9000"
-    command: yarn start
+    command: yarn dev
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=dev
     restart: always
     volumes:
       - .:/app/
@@ -27,16 +27,19 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=root
-      - MONGO_INITDB_DATABASE=test
-      - MONGO_INITDB_USERNAME=test
-      - MONGO_INITDB_PASSWORD=test
+      - MONGO_INITDB_ROOT_USERNAME="root"
+      - MONGO_INITDB_ROOT_PASSWORD="root"
+      - MONGO_INITDB_DATABASE="moment"
+      - MONGO_INITDB_USERNAME="moment"
+      - MONGO_INITDB_PASSWORD="fV=g#Dt/9JA=8{s^M?S;Wb|-"
     networks:
       - webnet
   redis: 
     container_name: 'redis'
     image: 'redis'
+    volumes:
+      - ./docker/images/redis/data:/data
+    command: redis-server --requirepass $${REDIS_PASSWORD:U[^CbCFIYnc:eq$@EF#H}LC}      
     ports: 
       - "6379:6379"
     networks:
