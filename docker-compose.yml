@@ -5,7 +5,7 @@ services:
     build: .
     ports:
       - "9000:9000"
-    command: yarn dev
+    command: yarn start
     environment:
       - NODE_ENV=dev
     restart: always
