@@ -2,14 +2,13 @@ FROM node:18.15
 
 WORKDIR /app
 
-COPY . /app/
-
-# RUN npm install -g pm2
 RUN yarn global add pm2
+
+COPY package.json yarn.lock /app/
 
 RUN yarn install
 
-ENV NODE_ENV production
+COPY . /app/
 
 EXPOSE 9000
 
