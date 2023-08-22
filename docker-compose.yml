@@ -27,11 +27,11 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - MONGO_INITDB_ROOT_USERNAME="root"
-      - MONGO_INITDB_ROOT_PASSWORD="root"
-      - MONGO_INITDB_DATABASE="moment"
-      - MONGO_INITDB_USERNAME="moment"
-      - MONGO_INITDB_PASSWORD="fV=g#Dt/9JA=8{s^M?S;Wb|-"
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=moment
+      - MONGO_INITDB_USERNAME=moment
+      - MONGO_INITDB_PASSWORD=dqA8V55eEXdPRxPXV8gPpQyVnnANAc
     networks:
       - webnet
   redis:
