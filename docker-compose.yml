@@ -38,7 +38,7 @@ services:
     container_name: 'redis'
     image: 'redis'
     volumes:
-      - ./docker/images/redis/data:/data
+      - ../docker/images/redis/data:/data
     command: /bin/sh -c "redis-server --requirepass $$REDIS_HOST_PASSWORD"
     env_file:
       - redis.env
