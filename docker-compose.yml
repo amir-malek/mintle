@@ -39,8 +39,9 @@ services:
     image: 'redis'
     volumes:
       - ./docker/images/redis/data:/data
-    environment:
-      - REDIS_PASSWORD=U[^CbCFIYnc:eq$@EF#H}LC
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_HOST_PASSWORD"
+    env_file:
+      - redis.env
     ports:
       - "6379:6379"
     networks:
