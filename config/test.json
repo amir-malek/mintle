@@ -1,0 +1,57 @@
+{
+  "dbConfig": {
+    "host": "localhost:27017",
+    "username": "test",
+    "password": "test",
+    "name": "test",
+    "optionalParams": ""
+  },
+  "redis": { "host": "localhost", "port": "6379", "password": "" },
+  "web3": {
+    "storage": {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEE4ODYzQTU2MkQxQjRhYzM1ZTY0QWNGQ2UzMTJEYTQwQzdmRDMzZUUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2Nzg3Mjc2MjE3MTUsIm5hbWUiOiJtaW50bGUifQ.AEiSon4Ecj9DyMcSQ_sWuCouP97WEtYz2qAg6Vjk0f4"
+    },
+    "alchemy": {
+      "mumbai": {
+        "apiKey": "HE2ciCsagV2cT-_jfY8e83A-E-2YDwfy",
+        "apiUrl": "https://polygon-mumbai.g.alchemy.com/v2/HE2ciCsagV2cT-_jfY8e83A-E-2YDwfy"
+      },
+      "sepolia": {
+        "apiKey": "ckiGrX7Z8Bt2FWfdbKc7cV9H4G2ZUyIi",
+        "apiUrl": "https://eth-sepolia.g.alchemy.com/v2/ckiGrX7Z8Bt2FWfdbKc7cV9H4G2ZUyIi"
+      }
+    },
+    "wallet": {
+      "pvKey": "e17a4d6b56344fa9ac67e7f47a5a37f9e86ea2bc21568d441653a53202f62add",
+      "address": "0x766b466ed5A8F29443529aCFebB1F52D3A15025e"
+    },
+    "contracts": {
+      "mint": { "address": "0x04266DF005d9af7830801549cb3793356d92F576" },
+      "factory": { "address": "0x9e4010c4a20aCCac303E7fe1DAbF2b9ce11B0eDf" }
+    }
+  },
+  "nft": {
+    "storage": {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQwN0RhMDhjNTZmMTVlNkFDODJFRUFGMzI5NGNmODA1QjdEMkRDNmYiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY4Njk4NDExMTQwOCwibmFtZSI6Im1pbnRsZSJ9.vbwQJUbaghfVF0oQzVu5DsVrTveuiwxtEFcZW33fcRE"
+    }
+  },
+  "security": { "secret": "sessionsecret" },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 9000,
+    "domain": "localhost:9000",
+    "apiBaseRoot": "/api",
+    "sslEnabled": true
+  },
+  "mail": { "service": "SES", "noReply": "no-reply@example.com" },
+  "aws": {
+    "accessKeyId": "cd52f3b0-2f1d-4a45-89cd-ec2d199b18ba",
+    "secretAccessKey": "70757da7da99ef7f04fecf727cc35d2efdee2a5f",
+    "S3": {
+      "region": "default",
+      "endpoint": "https://s3.ir-thr-at1.arvanstorage.ir/",
+      "publicEndpoint": "https://moment-s3.s3.ir-thr-at1.arvanstorage.ir/public",
+      "bucket": "moment-minter"
+    }
+  }
+}
