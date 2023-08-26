@@ -34,21 +34,26 @@ const addBulk = async (data, opts = undefined) => {
 const workerInstance = new Worker(
   queue.name,
   async (job) => {
+    console.log('Mint job started');
     const nft = await NFTModel.findById(job.data);
 
     if (!nft.ipfsUrl) throw new Error('No ipfs URI provided');
 
     if (nft.mintStatus === 'FAILED' || nft.mintStatus === 'NOT_SET') {
-      const receipt = await mintNFT(nft.destinationAddress, nft.ipfsUrl);
+      try {
+        const receipt = await mintNFT(nft.destinationAddress, nft.ipfsUrl);
 
-      // if (receipt.status === '1n') {
-      nft.mintStatus = 'SUCCESS';
-      nft.txHash = receipt.transactionHash;
-      nft.tokenId = Number(receipt.data);
-      await nft.save();
+        // if (receipt.status === '1n') {
+        nft.mintStatus = 'SUCCESS';
+        nft.txHash = receipt.transactionHash;
+        nft.tokenId = Number(receipt.data);
+        await nft.save();
       // } else {
-      //   throw new Error('NFT mint error');
       // }
+      } catch (e) {
+        console.log('mint error: ', e);
+        throw new Error(e);
+      }
     }
   },
   {

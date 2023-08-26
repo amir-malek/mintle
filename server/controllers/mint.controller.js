@@ -26,4 +26,27 @@ module.exports = {
       next(e);
     }
   },
+
+  PutRetryAll: async (req, res, next) => {
+    try {
+      const nfts = await NFTModel.find({
+        mintStatus: 'FAILED',
+      });
+
+      for (let i = 0; i < nfts.length; i++) {
+        const nft = nfts[i];
+
+        // eslint-disable-next-line no-await-in-loop
+        await addMintJob(nft.id, {
+          delay: i * 2 * 60 * 1000,
+        });
+      }
+
+      res.send({
+        message: 'mint queue restarted',
+      });
+    } catch (e) {
+      next(e);
+    }
+  },
 };
