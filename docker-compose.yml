@@ -7,7 +7,7 @@ services:
       - "9000:9000"
     command: yarn start
     environment:
-      - NODE_ENV=dev
+      - NODE_ENV=production
     restart: always
     volumes:
       - .:/app/
